@@ -12,12 +12,12 @@
 (async function(){
   const status=m=>{const el=document.getElementById("s");if(el)el.textContent=m};
   try{
-    const n=6;
+    const n=7;
     let b64="";
     for(let i=0;i<n;i++){
       status("Modul "+(i+1)+"/"+n);
-      const r=await fetch("./c"+i+".txt?v=3",{cache:"no-store"});
-      if(!r.ok) throw new Error("c"+i+" "+r.status);
+      const r=await fetch("./d"+i+".txt?v=5",{cache:"no-store"});
+      if(!r.ok) throw new Error("d"+i+" "+r.status);
       b64+=(await r.text()).replace(/\s+/g,"");
     }
     if(b64.length%4!==0) b64+="=".repeat((4-b64.length%4)%4);
