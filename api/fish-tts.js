@@ -1,84 +1,54 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
+    res.statusCode = 405;
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({ error: "Method not allowed" }));
   }
-
+  let body = "";
+  for await (const chunk of req) body += chunk;
+  let data = {};
+  try { data = JSON.parse(body || "{}"); } catch {}
+  const key = process.env.FISH_AUDIO_API_KEY || process.env.FISH_API_KEY;
+  if (!key) {
+    res.statusCode = 500;
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({ error: "FISH_AUDIO_API_KEY missing on server" }));
+  }
+  const text = String(data.text || "").slice(0, 3000);
+  const reference_id = data.reference_id || data.voice || "";
+  if (!text) {
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({ error: "text required" }));
+  }
   try {
-    const {
-      text,
-      reference_id,
-      format = "mp3"
-    } = req.body || {};
-
-    if (!text) {
-      return res.status(400).json({
-        error: "Text is required"
-      });
-    }
-
-    if (!reference_id) {
-      return res.status(400).json({
-        error: "reference_id is required"
-      });
-    }
-
-    const apiKey = process.env.FISH_AUDIO_API_KEY;
-
-    if (!apiKey) {
-      return res.status(500).json({
-        error: "FISH_AUDIO_API_KEY belum diatur di Vercel Environment Variables"
-      });
-    }
-
-    const fishResponse = await fetch(
-      "https://api.fish.audio/v1/tts",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "Accept": "audio/mpeg",
-          "model": "s2.1-pro-free"
-        },
-        body: JSON.stringify({
-          text: String(text).slice(0, 3000),
-          reference_id,
-          format
-        })
-      }
-    );
-
-    if (!fishResponse.ok) {
-      const errorText = await fishResponse.text();
-
-      return res.status(fishResponse.status).json({
-        error: errorText || "Fish Audio request failed"
-      });
-    }
-
-    const audioBuffer = Buffer.from(
-      await fishResponse.arrayBuffer()
-    );
-
-    res.setHeader(
-      "Content-Type",
-      fishResponse.headers.get("content-type") || "audio/mpeg"
-    );
-
-    res.setHeader(
-      "Cache-Control",
-      "no-store"
-    );
-
-    return res.status(200).send(audioBuffer);
-
-  } catch (error) {
-    console.error("Fish TTS proxy error:", error);
-
-    return res.status(500).json({
-      error: error.message || "Internal server error"
+    const r = await fetch("https://api.fish.audio/v1/tts", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + key,
+        "Content-Type": "application/json",
+        model: "s1"
+      },
+      body: JSON.stringify({
+        text,
+        reference_id: reference_id || undefined,
+        format: data.format || "mp3"
+      })
     });
+    if (!r.ok) {
+      const errText = await r.text();
+      res.statusCode = r.status;
+      res.setHeader("Content-Type", "application/json");
+      return res.end(JSON.stringify({ error: errText.slice(0, 500) }));
+    }
+    const buf = Buffer.from(await r.arrayBuffer());
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    return res.end(buf);
+  } catch (e) {
+    res.statusCode = 500;
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({ error: String(e.message || e) }));
   }
 }
