@@ -1,0 +1,34 @@
+ASTRA COMPANION — PLUGIN HUB UPGRADE
+
+WHAT THIS PACKAGE ADDS
+- api/github.js: authenticated GitHub REST proxy. Supports repository creation, repository/file reads, file writes, branches, commits, pull requests, issues, releases, workflow runs, search, and other allowed GitHub REST endpoints.
+- api/vercel.js: authenticated Vercel REST proxy for projects, deployments, domains, environment variables, and supported account/project operations.
+- api/plugin-health.js: reports whether server-side integrations are configured without revealing tokens.
+- plugins/manifest.json: machine-readable plugin capability registry.
+- Existing index.html and api/fish-tts.js are retained as the starting app.
+
+REQUIRED VERCEL ENVIRONMENT VARIABLES
+- GITHUB_TOKEN: GitHub fine-grained PAT or GitHub App token. Grant only the repositories and permissions Astra needs. Typical permissions: Administration (read/write only if creating repos), Contents (read/write), Metadata (read), Pull requests (read/write), Issues (read/write), Actions (read), Workflows (read/write only if editing workflows), and Releases (read/write if needed).
+- VERCEL_TOKEN: Vercel token scoped to the intended team/account.
+- ASTRA_PLUGIN_SECRET: long random secret used between the Astra client/tool runner and these endpoints.
+- FISH_AUDIO_API_KEY: existing Fish Audio server-side key.
+- ASTRA_ALLOWED_ORIGIN (optional): exact allowed frontend origin for GitHub endpoint CORS, e.g. https://your-astra-domain.vercel.app. Do not use * for a production app.
+
+IMPORTANT SETUP
+1. Deploy this project to the existing Astra Companion Vercel project, or test it in a preview first.
+2. In Vercel → Project → Settings → Environment Variables, add the variables above. Never put GITHUB_TOKEN or VERCEL_TOKEN in index.html, localStorage, or client-side JavaScript.
+3. Redeploy after adding environment variables.
+4. Open /api/plugin-health to see which integrations are configured.
+5. Call the GitHub proxy with a server-side tool runner or a client request carrying X-Astra-Plugin-Secret. Example GET: /api/github?path=/user. Example repository creation: POST /api/github?path=/user/repos with JSON {"name":"Astra-Companion","private":true,"description":"Astra Companion"}.
+6. For GitHub file creation use GitHub Contents API paths, e.g. POST /api/github?path=/repos/OWNER/REPO/contents/docs/hello.txt with {"message":"Add hello","content":"BASE64_CONTENT","branch":"main"}. The GitHub API requires file content base64 encoded.
+7. DELETE operations are blocked unless X-Astra-Confirm: CONFIRM is sent. Keep this confirmation behind a real user approval step.
+
+SECURITY / LIMITS
+- This is a server-side integration layer, not an automatic authorization bypass. The GitHub/Vercel token permissions still determine what actions succeed.
+- Keep ASTRA_PLUGIN_SECRET private. A static public website cannot safely conceal a shared secret from its users. For a multi-user/public deployment, place the plugin calls behind real user authentication and per-user authorization before enabling write operations.
+- The API routes are capability endpoints. The existing chat model does not automatically gain tool calling merely because these endpoints exist. Connect the Astra agent/tool dispatcher to these routes, parse tool calls, display planned mutations, and require approval for repo creation, writes, deploys, environment-variable changes, and destructive operations.
+- Never log tokens or full authorization headers.
+- Restrict GitHub token scope to the minimum required permissions. Use a separate test repository/token during development.
+
+EXISTING APP FEATURES
+The existing index.html and Fish Audio route are preserved as the source project's starting point. This package has not been deployed to Vercel and no external token has been tested here.
