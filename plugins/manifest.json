@@ -1,0 +1,11 @@
+{
+  "name": "Astra Companion Plugin Hub",
+  "version": "1.0.0",
+  "description": "Server-side integration layer for GitHub, Vercel, and Fish Audio.",
+  "integrations": [
+    {"id":"github","endpoint":"/api/github","methods":["GET","POST","PUT","PATCH","DELETE"],"capabilities":["create repositories","read repository metadata and files","create/update files","branches","commits","pull requests","issues","releases","workflow runs","search","other allowed GitHub REST endpoints"],"auth":"GITHUB_TOKEN + ASTRA_PLUGIN_SECRET"},
+    {"id":"vercel","endpoint":"/api/vercel","methods":["GET","POST","PUT","PATCH","DELETE"],"capabilities":["projects","deployments","domains","environment variables","logs and project settings supported by Vercel API"],"auth":"VERCEL_TOKEN + ASTRA_PLUGIN_SECRET"},
+    {"id":"fish-audio","endpoint":"/api/fish-tts","capabilities":["server-side text-to-speech"],"auth":"FISH_AUDIO_API_KEY"}
+  ],
+  "safety": {"tokensServerSideOnly":true,"deleteRequiresConfirmationHeader":true,"writesRequireServerSecret":true}
+}
