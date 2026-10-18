@@ -27,12 +27,15 @@ html,body{margin:0;height:100%;background:#000;color:#f5f5f7;font-family:-apple-
   const boot=document.getElementById("boot");
   const min=new Promise(r=>setTimeout(r,2400));
   try{
-    const r=await fetch("./g0.txt?v=9",{cache:"no-store"});
-    if(!r.ok) throw new Error("g0 HTTP "+r.status);
-    let b64=(await r.text()).replace(/\s+/g,"");
-    if(b64.length%4) b64+="=".repeat((4-b64.length%4)%4);
-    const bin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
-    const html=await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+    let html="";
+    for(const name of ["g0.txt","g1.txt"]){
+      const r=await fetch("./"+name+"?v=10",{cache:"no-store"});
+      if(!r.ok) throw new Error(name+" HTTP "+r.status);
+      let b64=(await r.text()).replace(/\s+/g,"");
+      if(b64.length%4) b64+="=".repeat((4-b64.length%4)%4);
+      const bin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+      html+=await new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+    }
     await min;
     boot.classList.add("hide");
     await new Promise(r=>setTimeout(r,650));
