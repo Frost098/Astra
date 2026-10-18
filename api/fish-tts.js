@@ -32,7 +32,6 @@ export default async function handler(req, res) {
     return res.end(JSON.stringify({ error: "text required" }));
   }
 
-  // Free-tier model. Paid headers (s1 / s2.1-pro) cause 402 on free API credit.
   const model = data.model || process.env.FISH_TTS_MODEL || "s2.1-pro-free";
 
   try {
