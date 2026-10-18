@@ -28,8 +28,8 @@ html,body{margin:0;height:100%;background:#000;color:#f5f5f7;font-family:-apple-
   const min=new Promise(r=>setTimeout(r,2400));
   try{
     let b64="";
-    for(let i=0;i<4;i++){
-      const r=await fetch("./p"+i+".txt?v=11",{cache:"no-store"});
+    for(let i=0;i<12;i++){
+      const r=await fetch("./p"+i+".txt?v=12",{cache:"no-store"});
       if(!r.ok) throw new Error("p"+i+" HTTP "+r.status);
       b64+=(await r.text()).replace(/\s+/g,"");
     }
