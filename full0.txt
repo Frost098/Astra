@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#0b0b0f"/>
+<meta name="description" content="Astra Companion — multi-companion AI chat"/>
+<title>Astra Companion</title>
+<style>
+:root{
+  --bg:#0b0b0f;--bg2:#12121a;--bg3:#1a1a24;--bg4:#22222e;
+  --text:#ececf1;--muted:#9b9baf;--border:#2a2a36;
+  --accent:#7c6af7;--accent2:#5b4fd6;--user:#2f2b4a;
+  --danger:#e35d6a;--ok:#3ecf8e;--warn:#e6b450;
+  --radius:14px;--sidebar:280px;--font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+[data-theme="light"]{
+  --bg:#f7f7f8;--bg2:#ffffff;--bg3:#efeff3;--bg4:#e5e5ea;
+  --text:#111827;--muted:#6b7280;--border:#e5e7eb;
+  --accent:#5b4fd6;--accent2:#4338ca;--user:#ebe9fb;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:var(--font)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:transparent}
+a{color:var(--accent)}
+.app{display:flex;height:100%;overflow:hidden}
+.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-head{padding:12px;display:flex;gap:8px;align-items:center}
+.brand{font-weight:700;letter-spacing:.2px;flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);transition:.15s}
+.btn:hover{background:var(--bg4)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:transparent}
+.btn-danger{color:var(--danger)}
+.search{margin:0 12px 8px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);width:calc(100% - 24px)}
+.session-list{flex:1;overflow:auto;padding:4px 8px 12px}
+.session-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;margin:2px 0;border:1px solid transparent}
+.session-item:hover{background:var(--bg3)}
+.session-item.active{background:var(--bg3);border-color:var(--border)}
+.session-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.session-meta{font-size:11px;color:var(--muted)}
+/* continue in next parts */
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<!-- PART 0 END - full content continues in full1.txt -->
