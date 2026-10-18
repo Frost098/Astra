@@ -15,7 +15,7 @@
     let html="";
     for(let i=0;i<6;i++){
       el.textContent="Modul "+(i+1)+"/6";
-      const r=await fetch("./p"+i+".part?v=3",{cache:"no-store"});
+      const r=await fetch("./p"+i+".part?v=4",{cache:"no-store"});
       if(!r.ok) throw new Error("p"+i+" HTTP "+r.status);
       html+=await r.text();
     }
